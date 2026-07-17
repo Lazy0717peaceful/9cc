@@ -9,9 +9,6 @@
 // 現在着目しているトークン
 Token *token;
 
-// 入力プログラム
-char *user_input;
-
 void error(char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
@@ -27,9 +24,17 @@ bool consume(char *op) {
   return true;
 }
 
+Token *consume_ident() {
+    if (token->kind != TK_IDENT)
+     return NULL;
+    Token *tok = token;
+    token = token->next;
+    return tok;
+}
+
 void expect(char *op) {
   if (token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
-    error_at(token->str, "expected \"%s\"", op);
+    error("エラーですよ");
   token = token->next;
 }
 
@@ -77,12 +82,12 @@ Token *tokenize(char *p) {
     }
 
 
-    if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == '<' || *p == '>') {
+    if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == '<' || *p == '>' || *p == '=' || *p == ';') {
       cur = new_token(TK_RESERVED, cur, p++,1);
       continue;
     }
 
-    if('a' <= *p && *p <= 'z') {
+    if ('a' <= *p && *p <= 'z') {
       cur = new_token(TK_IDENT, cur, p++, 1);
       cur->len = 1;
       continue;
@@ -99,17 +104,4 @@ Token *tokenize(char *p) {
 
   new_token(TK_EOF, cur, p, 0);
   return head.next;
-}
-
-void error_at(char *loc, char *fmt, ...) {
-  va_list ap;
-  va_start(ap, fmt);
-
-  int pos = loc - user_input;
-  fprintf(stderr, "%s\n", user_input);
-  fprintf(stderr, "%*s", pos, " "); // pos個の空白を出力
-  fprintf(stderr, "^ ");
-  vfprintf(stderr, fmt, ap);
-  fprintf(stderr, "\n");
-  exit(1);
 }
