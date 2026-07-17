@@ -28,7 +28,7 @@ void gen(Node *node) {
       return;
     case ND_ASSIGN:
       gen_lval(node->lhs);
-      gen(node->lhs);
+      gen(node->rhs);
 
       printf("  pop rdi\n");
       printf("  pop rax\n");

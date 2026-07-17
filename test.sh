@@ -28,6 +28,8 @@ assert 1 '1==1;'
 assert 1 '1!=0;' 
 assert 0 '0>1;'
 assert 0 '0>=1;'
+assert 7 'a = 4; a + 3;'
+assert 2 'x=4; y=2; x-y;'
 
 
 echo OK
